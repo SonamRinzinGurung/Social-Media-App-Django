@@ -1,0 +1,84 @@
+{% extends "network/layout.html" %}
+{% load static %}
+{% block title %} Profile {% endblock %}
+
+{% block body %}
+    <div id="user-profile">
+    <h3> {{profile_user}}</h3>
+
+    <div id="follow">
+        <!-- Follow if not same user -->
+        {% if user.is_authenticated and user != profile_user %}
+            <div><button id="follow-button" data-id={{profile_user.id}} class="btn btn-primary btn-sm">{% if is_follower %}Unfollow{% else %}Follow{% endif %}</button></div>
+        {% endif %}
+        <!--Followers and Following -->
+        <div class="">Followers</div>
+        <div id="followers" class="">{{followers_count}}</div>
+        <div class="">Following</div>
+        <div id="following" class="">{{following_count}}</div>
+    </div>
+    </div>
+
+    
+
+    {% for post in page_obj %}
+
+    <div class="card" style="width: 18rem; margin:10px">
+        <div class="card-body">
+        <small class="card-subtitle mb-2 text-muted">{{post.created_at}}</small>
+        <div id="edit-space-{{post.id}}">
+            <p class="card-text" id="post-body-{{post.id}}">{{post.post}}</p>
+            </div>
+        <p class="card-text">Likes: {{post.likes}}</p>
+        
+        {% if user.is_authenticated and  post.created_by == user %}
+        <span id="edit-button" class="" data-id={{post.id}}>Edit</span>
+        {% endif %}
+        
+        </div>
+    </div>
+    
+    {% empty %}
+    <p>No posts yet</p>
+    
+    {% endfor %}
+    
+    <div class="pagination">
+      <ul class="pagination">
+        
+          {% if page_obj.has_previous %}
+          
+              <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo Previous</a>
+          {% endif %}
+        
+        
+          {% for page in page_obj.paginator.page_range %}
+            {% if page == page_obj.number %}
+            <li class="page-item active">
+                <a class="page-link" href="?page={{ page }}">{{ page }} </a>
+         </li>
+            {% else %}
+                <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+            {% endif %}
+          {% endfor %}
+          
+          
+          {% if page_obj.has_next %}
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next &raquo</a>
+    
+          {% endif %}
+        
+        </ul>
+    </div>
+
+
+  
+
+     
+
+{% endblock %}
+{% block script %} 
+<script src="{% static 'network/post.js' %}"></script> 
+<script src="{% static 'network/follow.js' %}"></script> 
+
+{% endblock %}
